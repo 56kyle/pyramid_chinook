@@ -18,22 +18,24 @@
             <th>Fax</th>
             <th>Email</th>
         </tr>
-        <tr>
-            <td> ${employee_id} </td>
-            <td> ${last_name} </td>
-            <td> ${first_name} </td>
-            <td> ${title} </td>
-            <td> ${reports_to} </td>
-            <td> ${birth_date} </td>
-            <td> ${hire_date} </td>
-            <td> ${address} </td>
-            <td> ${city} </td>
-            <td> ${state} </td>
-            <td> ${country} </td>
-            <td> ${postal_code} </td>
-            <td> ${phone} </td>
-            <td> ${fax} </td>
-            <td> ${email} </td>
-        </tr>
+        % for employee in employees:
+            <tr>
+                <td>${employee.EmployeeId}</td>
+                <td>${employee.LastName}</td>
+                <td>${employee.FirstName}</td>
+                <td>${employee.Title}</td>
+                <td>${employee.ReportsTo}</td>
+                <td>${employee.BirthDate}</td>
+                <td>${employee.HireDate}</td>
+                <td>${employee.Address}</td>
+                <td>${employee.City}</td>
+                <td>${employee.State}</td>
+                <td>${employee.Country}</td>
+                <td>${employee.PostalCode}</td>
+                <td>${employee.Phone}</td>
+                <td>${employee.Fax}</td>
+                <td>${employee.Email}</td>
+            </tr>
+        % endfor
     </table>
 </div>
