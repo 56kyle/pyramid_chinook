@@ -1,15 +1,15 @@
-## pyramid_chinook
+# pyramid_chinook
 ===============
 
 So I originally went to sort Employees by Country, but found out after I had it set up that all of them are in Canada...
 Thankfully the Employees have different cities, so I just made that into a filter and kept the Country one since it isn't hurting anything.
 
-### Index
+## Index
 -----------------
 1. [Examples](#examples)
 2. [Testing](#testing)
 
-#### Examples
+## Examples
 -----------------
 
 Some example links:
@@ -23,7 +23,7 @@ http://127.0.0.1:6543/Employee/City/Edmonton
 ![A picture of http://127.0.0.1:6543/Employee/City/Edmonton being viewed](img/EmployeeCityEdmonton.PNG)
 
 
-#### Testing
+## Testing
 -----------------
 ![A picture of the coverage report](img/PytestCoverageReport.PNG)
 
