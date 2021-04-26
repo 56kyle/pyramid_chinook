@@ -25,7 +25,7 @@ http://127.0.0.1:6543/Employee/City/Edmonton
 
 #### Testing
 -----------------
-
+![A picture of the coverage report](img/PytestCoverageReport.PNG)
 
 
 <details>
