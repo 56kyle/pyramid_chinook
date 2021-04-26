@@ -5,8 +5,8 @@ So I originally went to sort Employees by Country, but found out after I had it 
 Thankfully the Employees have different cities, so I just made that into a filter and kept the Country one since it isn't hurting anything.
 
 ### Index
-1. Examples
-2. Testing
+1. [Examples]
+2. [Testing]
 
 #### Examples
 
