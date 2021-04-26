@@ -19,10 +19,17 @@ def my_view(request):
 def country_employee_view(request):
     try:
         query = request.dbsession.query(models.Employee)
-        filtered_query = query.filter(models.Employee.Country == request.matchdict['country']).order_by(models.Employee.EmployeeId)
+        if not query:
+            return {'employees': []}
+        filtered_query = query.filter(models.Employee.Country == request.matchdict['country'])
+        if not filtered_query:
+            return {'employees': []}
+        filtered_query.order_by(models.Employee.EmployeeId)
         employees = filtered_query.all()
     except SQLAlchemyError:
         return Response(db_err_msg, content_type='text/plain', status=500)
+    except TypeError:
+        return Response('Query has failed.', content_type='text/plain', status=500)
     return {
         'employees': employees
     }
@@ -32,10 +39,13 @@ def country_employee_view(request):
 def city_employee_view(request):
     try:
         query = request.dbsession.query(models.Employee)
-        filtered_query = query.filter(models.Employee.City == request.matchdict['city']).order_by(models.Employee.EmployeeId)
+        filtered_query = query.filter(models.Employee.City == request.matchdict['city'])
+        filtered_query.order_by(models.Employee.EmployeeId)
         employees = filtered_query.all()
     except SQLAlchemyError:
         return Response(db_err_msg, content_type='text/plain', status=500)
+    except TypeError:
+        return Response('Query has failed.', content_type='text/plain', status=500)
     return {
         'employees': employees
     }

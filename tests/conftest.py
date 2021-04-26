@@ -1,6 +1,7 @@
 import alembic
 import alembic.config
 import alembic.command
+import datetime
 import os
 from pyramid.paster import get_appsettings
 from pyramid.scripting import prepare
@@ -31,14 +32,14 @@ def dbengine(app_settings, ini_file):
     engine = models.get_engine(app_settings)
 
     alembic_cfg = alembic.config.Config(ini_file)
-    Base.metadata.drop_all(bind=engine)
-    alembic.command.stamp(alembic_cfg, None, purge=True)
+    #Base.metadata.drop_all(bind=engine)
+    #alembic.command.stamp(alembic_cfg, None, purge=True)
 
     # run migrations to initialize the database
     # depending on how we want to initialize the database from scratch
     # we could alternatively call:
-    # Base.metadata.create_all(bind=engine)
-    # alembic.command.stamp(alembic_cfg, "head")
+    Base.metadata.create_all(bind=engine)
+    alembic.command.stamp(alembic_cfg, "head")
     alembic.command.upgrade(alembic_cfg, "head")
 
     yield engine
@@ -130,3 +131,29 @@ def dummy_config(dummy_request):
     """
     with testConfig(request=dummy_request) as config:
         yield config
+
+@pytest.fixture
+def employee(dbsession):
+    """
+    :param dbsession:
+    :return:
+    Creates a mock Employee that is added to the dbsession.
+    """
+    an_employee = models.Employee(
+        LastName='Smith',
+        FirstName='John',
+        Title='Manager',
+        ReportsTo=1,
+        BirthDate=datetime.datetime(1990, 1, 1, 1, 1, 1, 1),
+        HireDate=datetime.datetime(2020, 1, 1, 1, 1, 1, 1),
+        Address='0000 NotARealPlace Ln.',
+        City='FakeCity',
+        State='FakeState',
+        Country='FakeCountry',
+        PostalCode='99999',
+        Phone='(999)999-9999',
+        Fax='(999)999-9998',
+        Email='JohnSmithTheManager@notasite.com'
+    )
+    dbsession.add(an_employee)
+    dbsession.flush()
