@@ -2,6 +2,7 @@ import alembic
 import alembic.config
 import alembic.command
 import datetime
+import inspect
 import os
 from pyramid.paster import get_appsettings
 from pyramid.scripting import prepare
@@ -157,3 +158,23 @@ def employee(dbsession):
     )
     dbsession.add(an_employee)
     dbsession.flush()
+
+
+@pytest.fixture
+def employee_dict(employee, dbsession):
+    columns = []
+    for i in dir(models.Employee):
+        if not i[0].startswith('_'):
+            if not inspect.ismethod(i[1]):
+                columns.append(i)
+    columns.remove('metadata')
+    columns.remove('registry')
+
+    test_employee = dbsession.query(models.Employee).filter(
+        models.Employee.Email == 'JohnSmithTheManager@notasite.com').one()
+    expected_values = {}
+    for col in columns:
+        expected_values[col] = getattr(test_employee, col)
+    return expected_values
+
+
