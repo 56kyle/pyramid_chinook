@@ -15,31 +15,37 @@ def my_view(request):
     return {'one': one, 'project': 'pyramid_chinook'}
 
 
-@view_config(route_name='CountryEmployee', renderer='pyramid_chinook:templates/employee.mako')
-def country_employee_view(request):
+@view_config(route_name='FilteredEmployee', renderer='pyramid_chinook:templates/employee.mako')
+def filtered_employee_view(request):
+    allowed_filters = {
+        'EmployeeId': models.Employee.EmployeeId,
+        'LastName': models.Employee.LastName,
+        'FirstName': models.Employee.FirstName,
+        'Title': models.Employee.Title,
+        'ReportsTo': models.Employee.ReportsTo,
+        'BirthDate': models.Employee.BirthDate,
+        'HireDate': models.Employee.HireDate,
+        'Address': models.Employee.Address,
+        'City': models.Employee.City,
+        'State': models.Employee.State,
+        'Country': models.Employee.Country,
+        'PostalCode': models.Employee.PostalCode,
+        'Phone': models.Employee.Phone,
+        'Fax': models.Employee.Fax,
+        'Email': models.Employee.Email,
+    }
     try:
         query = request.dbsession.query(models.Employee)
         if not query:
             return {'employees': []}
-        filtered_query = query.filter(models.Employee.Country == request.matchdict['country'])
+        if request.matchdict['filter'] not in allowed_filters.keys():
+            return {'employees': []}
+
+        filtered_query = query.filter(
+            allowed_filters[request.matchdict['filter']] == request.matchdict['value']
+        )
         if not filtered_query:
             return {'employees': []}
-        filtered_query.order_by(models.Employee.EmployeeId)
-        employees = filtered_query.all()
-    except SQLAlchemyError:
-        return Response(db_err_msg, content_type='text/plain', status=500)
-    except TypeError:
-        return Response('Query has failed.', content_type='text/plain', status=500)
-    return {
-        'employees': employees
-    }
-
-
-@view_config(route_name='CityEmployee', renderer='pyramid_chinook:templates/employee.mako')
-def city_employee_view(request):
-    try:
-        query = request.dbsession.query(models.Employee)
-        filtered_query = query.filter(models.Employee.City == request.matchdict['city'])
         filtered_query.order_by(models.Employee.EmployeeId)
         employees = filtered_query.all()
     except SQLAlchemyError:
