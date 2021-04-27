@@ -1,3 +1,5 @@
+from datetime import datetime
+import inspect
 from pyramid.view import view_config
 from pyramid.response import Response
 from sqlalchemy.exc import SQLAlchemyError
@@ -17,33 +19,19 @@ def my_view(request):
 
 @view_config(route_name='FilteredEmployee', renderer='pyramid_chinook:templates/employee.mako')
 def filtered_employee_view(request):
-    allowed_filters = {
-        'EmployeeId': models.Employee.EmployeeId,
-        'LastName': models.Employee.LastName,
-        'FirstName': models.Employee.FirstName,
-        'Title': models.Employee.Title,
-        'ReportsTo': models.Employee.ReportsTo,
-        'BirthDate': models.Employee.BirthDate,
-        'HireDate': models.Employee.HireDate,
-        'Address': models.Employee.Address,
-        'City': models.Employee.City,
-        'State': models.Employee.State,
-        'Country': models.Employee.Country,
-        'PostalCode': models.Employee.PostalCode,
-        'Phone': models.Employee.Phone,
-        'Fax': models.Employee.Fax,
-        'Email': models.Employee.Email,
-    }
     try:
         query = request.dbsession.query(models.Employee)
         if not query:
             return {'employees': []}
-        if request.matchdict['filter'] not in allowed_filters.keys():
-            return {'employees': []}
 
-        filtered_query = query.filter(
-            allowed_filters[request.matchdict['filter']] == request.matchdict['value']
-        )
+        if isinstance(getattr(models.Employee, request.matchdict['filter']), datetime):
+            filtered_query = query.filter(
+                str(getattr(models.Employee, request.matchdict['filter'])) == request.matchdict['value']
+            )
+        else:
+            filtered_query = query.filter(
+                getattr(models.Employee, request.matchdict['filter']) == request.matchdict['value']
+            )
         if not filtered_query:
             return {'employees': []}
         filtered_query.order_by(models.Employee.EmployeeId)
@@ -52,6 +40,8 @@ def filtered_employee_view(request):
         return Response(db_err_msg, content_type='text/plain', status=500)
     except TypeError:
         return Response('Query has failed.', content_type='text/plain', status=500)
+    except AttributeError:
+        return Response('Filter is incorrectly spelled or not existent', content_type='text/plain', status=518)
     return {
         'employees': employees
     }
