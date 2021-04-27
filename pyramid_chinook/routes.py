@@ -1,5 +1,4 @@
 def includeme(config):
     config.add_static_view('static', 'static', cache_max_age=3600)
     config.add_route('home', '/')
-    config.add_route('CountryEmployee', '/Employee/Country/{country}')
-    config.add_route('CityEmployee', '/Employee/City/{city}')
+    config.add_route('FilteredEmployee', '/Employee/{filter}/{value}')
